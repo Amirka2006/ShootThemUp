@@ -127,5 +127,3 @@ void ASTUBaseWeapon::LogAmo()
     AmmoInfo += CurrentAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
     UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
 }
-
-
