@@ -3,24 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "STUBaseWeapon.h"
 #include "Components/ActorComponent.h"
-#include "Misc/AssetRegistryInterface.h"
+#include "STUCoreTypes.h"
 #include "STUWeaponComponent.generated.h"
 
 
 class ASTUBaseWeapon;
-
-USTRUCT(BlueprintType)
-struct FWeaponData
-{
-    GENERATED_BODY()
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-    TSubclassOf<ASTUBaseWeapon> WeaponClass;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-    UAnimMontage* ReloadAnimMontage;
-};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
@@ -35,6 +24,10 @@ public:
     void NextWeapon();
     void Reload();
 
+    bool GetCurrentWeaponUIData(FWeaponUIData& UIData) const;
+    bool GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const;
+    
+    
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -75,36 +68,16 @@ private:
     void OnEquipFinished(USkeletalMeshComponent* MeshComp);
     void OnReloadFinished(USkeletalMeshComponent* MeshComp);
 
-
     void OnWeaponChange(USkeletalMeshComponent* MeshComp);
 
     bool CanFire() const;
     bool CanEquip() const;
     bool CanReload() const;
 
+    void OnEmptyClip();
+    void ChangeClip();
+
     ACharacter* GetCharacter() const;
 
-    template <typename T>
-    T* FindNotifyByClass(UAnimSequenceBase* Animation)
-    {
-        
-        if (!Animation) return nullptr;
-
-        const auto NotifyEvents = Animation->Notifies;
-        for (auto NotifyEvent : NotifyEvents)
-        {
-            auto AnimNotify = Cast<T>(NotifyEvent.Notify);
-            auto ChangeWeapon = Cast<T>(NotifyEvent.Notify);
-            
-            if (AnimNotify)
-            {
-                return AnimNotify;
-            }
-            else if(ChangeWeapon)
-            {
-                return ChangeWeapon;
-            }
-        }
-        return nullptr;
-    }
+    
 };

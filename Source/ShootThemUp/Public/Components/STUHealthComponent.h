@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "STUCoreTypes.h"
 #include "STUHealthComponent.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE(FOnDeathSignature);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float);
+
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All)
 
@@ -20,13 +20,17 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 public:
     USTUHealthComponent();
 
-    float GetHealth() const { return Health; }
-
     UFUNCTION(BlueprintCallable)
-    bool IsDead() const { return FMath::IsNearlyZero(Health); };
+    float GetHealth() const { return Health; }
 
     FOnDeathSignature OnDeath;
     FOnHealthChangedSignature OnHealthChanged;
+    
+    UFUNCTION(BlueprintCallable, Category="Health")
+    bool IsDead() const { return FMath::IsNearlyZero(Health); };
+
+    UFUNCTION(BlueprintCallable, Category="Health")
+    float  GetHealthPercent() const {return Health / MaxHealth; }
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Health", meta=(ClampMin = "0.0", ClampMax = "1000.0"))

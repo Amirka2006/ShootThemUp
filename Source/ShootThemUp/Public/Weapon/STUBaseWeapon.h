@@ -1,27 +1,14 @@
-// Shoot Them Up Game, All Rights Reserved.
+ // Shoot Them Up Game, All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "STUCoreTypes.h"
 #include "STUBaseWeapon.generated.h"
 
 
 
-USTRUCT(BlueprintType)
-struct FAmmoData
-{
-    GENERATED_BODY()
-    
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-    int32 Bullets;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon", meta=(EditCondition = "!Infinite"))
-    int32 Clips;
-    
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-    bool Infinite;
-};
 class USkeletalMeshComponent;
 
 UCLASS()
@@ -32,8 +19,16 @@ class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 public:
     ASTUBaseWeapon();
 
+    FOnClipEmptySignature OnClipEmpty;
+
     virtual void StartFire();
     virtual void StopFire();
+
+    void ChangeClip();
+    bool CanReload() const;
+
+    FWeaponUIData GetUIData() const { return UIData; }
+    FAmmoData GetAmmoData() const {return CurrentAmmo; }
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
@@ -47,6 +42,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     FAmmoData DefaultAmmo{15,10,false};
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+    FWeaponUIData UIData;
     
     virtual void BeginPlay() override;
 
@@ -63,7 +61,6 @@ protected:
     void DecreaseAmmo();
     bool IsAmmoEmpty() const;
     bool IsClipEmpty() const;
-    void ChangeClip();
     void LogAmo();
 
 private:
