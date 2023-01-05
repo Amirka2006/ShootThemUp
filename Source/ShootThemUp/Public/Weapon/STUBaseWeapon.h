@@ -30,6 +30,8 @@ public:
     FWeaponUIData GetUIData() const { return UIData; }
     FAmmoData GetAmmoData() const {return CurrentAmmo; }
 
+    bool TryToAddAmmo(int32 ClipsAmmount);
+
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components")
     USkeletalMeshComponent* WeaponMesh;
@@ -61,6 +63,8 @@ protected:
     void DecreaseAmmo();
     bool IsAmmoEmpty() const;
     bool IsClipEmpty() const;
+    bool IsAmmoFull() const;
+    
     void LogAmo();
 
 private:
